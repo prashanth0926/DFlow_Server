@@ -1,6 +1,5 @@
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -11,15 +10,18 @@ var localStrategy = require('passport-local');
 var config = require('./config');
 var cors = require('cors');
 
-mongoose.connect(config.mongoUrl);
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
-  console.log("Connected correctly to server");
+var db = mongoose.connect(config.mongoUrl, {
+  useMongoClient: true
+});
+db.then((err, res) => {
+  if(err) console.error.bind(console, 'connection error:');
+  else console.log("Connected correctly to server");
 });
 
 var qas = require('./routes/qas');
 var users = require('./routes/users');
+var ports = require('./routes/ports');
+var profile = require('./routes/profile');
 
 var app = express();
 
@@ -44,15 +46,11 @@ passport.deserializeUser(user.deserializeUser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors());
-// app.use(function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header("Access-Control-Allow-Headers", "x-access-token, Origin, X-Requested-With, Content-Type, Accept");
-//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS, DELETE");
-//   next();
-// });
 
 app.use('/api/users', users);
 app.use('/api/qas', qas);
+app.use('/api/ports', ports);
+app.use('/api/profile', profile);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

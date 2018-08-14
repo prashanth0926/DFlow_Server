@@ -3,9 +3,11 @@
  */
 
 module.exports = {
-    'secretKey': '12345-67890-09876-54321',
-    'mongoUrl' : 'mongodb://admin:z@ds131151.mlab.com:31151/upflow'
-
-    //'mongoUrl' : 'mongodb://localhost:27017/upflow'
+    'secretKey': process.env.SECRET_KEY || '12345-67890-09876-54321',
+    'mongoUrl': process.env.MONGO_URL || 'mongodb://localhost:27017/upflow',
+    'nodeEmail': process.env.NODE_EMAIL,
+    'nodeEmailPassword': process.env.NODE_EMAIL_PASSWORD,
+    'toMail': process.env.TO_EMAIL,
+    'mailService': process.env.MAIL_SERVICE
 };
 
